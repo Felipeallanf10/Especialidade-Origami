@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia da Especialidade de Origami</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chosen Palette: Warm Paper Tones -->
+    <!-- Application Structure Plan: A single-page application with a fixed top navigation bar for easy access to different sections: 'Início', 'História', 'Teoria', 'Símbolos', 'Prática', and 'Requisitos'. The core structure remains focused on guiding the user logically. The new 'Símbolos' section is highly interactive, using modals to explain each fold symbol, addressing the user's need for a dedicated visual and video resource (iframe placeholder). The 'Prática' section now includes basic forms (bases) alongside complex models. This structure ensures all requirements (from theory to practice) are covered in an easily navigable and interactive way. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: History of Origami (Resumo) -> Goal: Inform -> Presentation: Thematic cards with summarized text. Justification: Presents historical facts in a concise, readable format. Method: HTML/CSS with Tailwind.
+        - Report Info: Definition and Uses (Resumo) -> Goal: Educate -> Presentation: Accordion/Text block in Teoria section. Justification: Clearly defines terms and differences in usage. Method: HTML/CSS/JS (for toggle details).
+        - Report Info: Fold Symbols (Item 4) -> Goal: Instruct -> Presentation: Interactive grid of symbols. -> Interaction: Clicking a symbol opens a modal showing the symbol, movement description, and an interactive video/iframe placeholder for demonstration. Justification: This is crucial for learning the language of origami and directly addresses the user's request for video integration for each symbol. Method: HTML/CSS/JS.
+        - Report Info: Bases and Models (Item 5 & 6) -> Goal: Instruct -> Presentation: Grid of selectable origami models and bases. -> Interaction: Clicking a model/base opens a step-by-step modal with instructions. Justification: Provides focused, practical instruction. Method: HTML/CSS/JS.
+        - All visual diagrams for folds are created using styled divs and borders to adhere to the no-SVG rule.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        :root {
+            --bg-color: #FDF6E3;
+            --text-color: #584B33;
+            --primary-color: #D2B48C;
+            --secondary-color: #A0522D;
+            --accent-color: #8B4513;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover {
+            color: var(--accent-color);
+            border-bottom-color: var(--accent-color);
+        }
+        .card {
+            background-color: white;
+            border-left: 5px solid var(--primary-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .modal-content {
+            background-color: var(--bg-color);
+        }
+        .symbol-card {
+            background-color: white;
+            transition: transform 0.2s;
+        }
+        .symbol-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .fold-symbol-visualization {
+             font-family: Arial, sans-serif;
+             font-size: 2rem;
+             font-weight: bold;
+             color: var(--accent-color);
+        }
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-color);
+        }
+        .base-card {
+            border-color: var(--accent-color);
+            border-style: dashed;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Kalam:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold" style="font-family: 'Kalam', cursive; color: var(--accent-color);">Origami</div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#inicio" class="nav-link border-b-2 border-transparent pb-1">Início</a>
+                <a href="#historia" class="nav-link border-b-2 border-transparent pb-1">História & Uso</a>
+                <a href="#simbolos" class="nav-link border-b-2 border-transparent pb-1">Símbolos</a>
+                <a href="#pratica" class="nav-link border-b-2 border-transparent pb-1">Prática (Bases & Modelos)</a>
+                <a href="#requisitos" class="nav-link border-b-2 border-transparent pb-1">Requisitos</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-2xl">☰</button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+             <a href="#inicio" class="block py-2 text-center nav-link">Início</a>
+             <a href="#historia" class="block py-2 text-center nav-link">História & Uso</a>
+             <a href="#simbolos" class="block py-2 text-center nav-link">Símbolos</a>
+             <a href="#pratica" class="block py-2 text-center nav-link">Prática</a>
+             <a href="#requisitos" class="block py-2 text-center nav-link">Requisitos</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section id="inicio" class="text-center min-h-[60vh] flex flex-col justify-center items-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4" style="color: var(--accent-color);">Especialidade de Origami</h1>
+            <p class="text-lg md:text-xl max-w-3xl mx-auto" style="color: var(--text-color);">Bem-vindo ao guia interativo completo para sua especialidade! Estude a teoria e pratique as dobras necessárias para a conquista.</p>
+             <a href="#historia" class="mt-8 px-6 py-3 btn-primary rounded-full font-semibold shadow-lg">Começar a Aventura!</a>
+        </section>
+
+        <section id="historia" class="py-16 bg-white/50 rounded-2xl p-8">
+            <h2 class="text-3xl font-bold text-center mb-12" style="color: var(--accent-color);">1. Definição e História (Requisito 1)</h2>
+            <div class="max-w-4xl mx-auto space-y-8">
+                <div class="card p-6 rounded-lg shadow-md border-b-4 border-primary-color">
+                    <h3 class="text-xl font-semibold mb-2" style="color: var(--secondary-color);">O que é Origami?</h3>
+                    <p class="mb-4">Origami (japonês: <strong>折り紙</strong>, do <em>ori</em> “dobrar” e <em>kami</em> “papel”) é a arte tradicional japonesa de <strong>dobrar o papel</strong>, criando representações de seres ou objetos por meio de dobras geométricas em uma única folha, sem cortá-la ou colá-la. Geralmente, parte-se de um papel quadrado.</p>
+                </div>
+                <div class="card p-6 rounded-lg shadow-md border-b-4 border-primary-color">
+                    <h3 class="text-xl font-semibold mb-2" style="color: var(--secondary-color);">Desenvolvimento Histórico</h3>
+                    <p class="mb-2">Conforme o papel se tornou menos caro, o origami evoluiu de uma arte cerimonial e religiosa (no Japão, inicialmente transmitida verbalmente) para uma arte popular.</p>
+                    <ul class="list-disc list-inside ml-4 space-y-1">
+                        <li><strong>1797:</strong> Publicado o primeiro conjunto de instruções de origami em um livro (<em>Hiden Senbazuru Orikata</em>).</li>
+                        <li><strong>1845:</strong> Lançado o livro <em>Kan no mado</em>, que popularizou modelos como o sapo.</li>
+                        <li><strong>Século VIII - África e Europa:</strong> Monges mouros levaram a arte da dobragem de papel à Espanha, inicialmente criando <strong>figuras geométricas</strong> por restrições religiosas. Dessa região, a técnica se espalhou pela Europa e América do Sul.</li>
+                    </ul>
+                </div>
+                <div class="card p-6 rounded-lg shadow-md border-b-4 border-primary-color">
+                    <h3 class="text-xl font-semibold mb-2" style="color: var(--secondary-color);">Usos Antigos vs. Atuais (Requisito 2)</h3>
+                    <p class="mb-2">O uso mais conhecido atualmente é o <strong>artístico e decorativo</strong>, acessível a todas as idades.</p>
+                    <p>No passado, a técnica era predominante em contextos <strong>religiosos e cerimoniais</strong> (Japão) ou <strong>matemáticos e geométricos</strong> (cultura moura). Hoje, o origami também se faz presente na educação, na terapia ocupacional e na engenharia (design de embalagens, robótica).</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="simbolos" class="py-16">
+            <h2 class="text-3xl font-bold text-center mb-12" style="color: var(--accent-color);">4. Símbolos e Movimentos (Requisito 4)</h2>
+             <p class="text-center max-w-3xl mx-auto mb-12">Os símbolos são a linguagem padrão dos diagramas de origami, representando dobras (vale, montanha), vincos, movimentos internos e externos, além de ações auxiliares como abrir, soprar e segurar. Clique em cada símbolo para ver a descrição do movimento, sua aplicação prática e um exemplo visual no modal.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div class="p-4 bg-white rounded-lg shadow-md">
+                    <img src="./simbolos-origami-1.gif" alt="Símbolos Origami 1" class="w-full h-auto object-contain">
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow-md">
+                    <img src="./simbolos-origami-2.jpg" alt="Símbolos Origami 2" class="w-full h-auto object-contain">
+                </div>
+            </div>
+        </section>
+        
+        <section id="pratica" class="py-16 bg-white/50 rounded-2xl p-8">
+            <h2 class="text-3xl font-bold text-center mb-12" style="color: var(--accent-color);">Prática: Bases e Modelos (Requisitos 5, 6, 7, 8)</h2>
+            <p class="text-center max-w-2xl mx-auto mb-12">É por meio das **bases** que se dá origem aos origamis (Requisito 5). Escolha um dos modelos ou bases abaixo para ver o passo a passo detalhado (Requisito 6).</p>
+            
+            <h3 class="text-2xl font-bold mb-6" style="color: var(--secondary-color);">Bases Fundamentais (Requisito 5)</h3>
+            <div id="base-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                <div class="p-4 bg-white rounded-lg shadow-md text-center">
+                    <img src="./base-quadrada.png" alt="Base Quadrada" class="w-full h-auto object-contain mb-2">
+                    <h4 class="font-semibold">Base Quadrada</h4>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow-md text-center">
+                    <img src="./base-balao.png" alt="Base do Balão" class="w-full h-auto object-contain mb-2">
+                    <h4 class="font-semibold">Base do Balão</h4>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow-md text-center">
+                    <img src="./base-passaro.png" alt="Base do Pássaro" class="w-full h-auto object-contain mb-2">
+                    <h4 class="font-semibold">Base do Pássaro</h4>
+                </div>
+                <div class="p-4 bg-white rounded-lg shadow-md text-center">
+                    <img src="./base-peixe.png" alt="Base do Peixe" class="w-full h-auto object-contain mb-2">
+                    <h4 class="font-semibold">Base do Peixe</h4>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold mb-6 mt-12" style="color: var(--secondary-color);">Modelos (Requisito 6)</h3>
+            <p class="text-center max-w-3xl mx-auto mb-8 text-sm bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                <strong>💡 Observação importante:</strong> Os vídeos e diagramas apresentados aqui são apenas exemplos de referência. 
+                Sinta-se à vontade para pesquisar outras técnicas e variações do mesmo modelo! Você pode escolher versões mais simples 
+                ou mais complexas, de acordo com seu nível de habilidade.
+            </p>
+            <div id="model-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--secondary-color);">📋 Diagramas Reais Disponíveis</h3>
+                <p class="mb-4">Você tem acesso aos seguintes diagramas originais em sua pasta:</p>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-4">
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-tsuru.jpg" alt="Diagrama Tsuru" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Tsuru</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-cachorro.jpg" alt="Diagrama Cachorro" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Cachorro</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-flor.jpg" alt="Diagrama Flor" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Flor</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-cigarra.jpg" alt="Diagrama Cigarra" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Cigarra</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-sapo_que_pula.png" alt="Diagrama Sapo que Pula" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Sapo que Pula</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-pombo_correio.jpg" alt="Diagrama Pombo Correio" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Pombo Correio</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-barco_a_vela.jpg" alt="Diagrama Barco à Vela" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Barco à Vela</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-galinha.jpg" alt="Diagrama Galinha" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Galinha</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-folha.gif" alt="Diagrama Folha" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Folha</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-pato.jpg" alt="Diagrama Pato" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Pato</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-borboleta.jpg" alt="Diagrama Borboleta" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Borboleta</p>
+                    </div>
+                    <div class="p-2 bg-white rounded-lg shadow-md text-center">
+                        <img src="./diagrama-pessoa.jpg" alt="Diagrama Pessoa" class="w-full h-auto object-contain">
+                        <p class="mt-2 text-sm font-semibold">Pessoa</p>
+                    </div>
+                </div>
+                <p class="mt-4 text-sm text-gray-600">
+                    <strong>💡 Dica:</strong> Para usar os diagramas reais, substitua as URLs dos placeholders pelos caminhos dos arquivos locais (ex: <code>./diagrama-tsuru.jpg</code>).
+                </p>
+            </div>
+        </section>
+
+        <section id="requisitos" class="py-16">
+            <h2 class="text-3xl font-bold text-center mb-12" style="color: var(--accent-color);">Lista Completa de Requisitos</h2>
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="flex items-start p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                    <input type="checkbox" id="req1" class="mt-1.5 mr-3 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer">
+                    <label for="req1" class="cursor-pointer">1. Definir o que é um origami. Conhecer sua história e desenvolvimento em diferentes países.</label>
+                </div>
+                <div class="flex items-start p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                    <input type="checkbox" id="req2" class="mt-1.5 mr-3 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer">
+                    <label for="req2" class="cursor-pointer">2. Definir quais são os principais usos do origami atualmente e qual a diferença em relação a como era usado no passado.</label>
+                </div>
+                <div class="flex items-start p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                    <input type="checkbox" id="req3" class="mt-1.5 mr-3 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer">
+                    <label for="req3" class="cursor-pointer">3. Explicar a importância e utilidade dos diagramas. Conhecer os principais símbolos usados neles.</label>
+                </div>
+                <div class="flex items-start p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                    <input type="checkbox" id="req4" class="mt-1.5 mr-3 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer">
+                    <label for="req4" class="cursor-pointer">4. Ser capaz de identificar os seguintes símbolos e executar o movimento correspondente, quando houver:<br>
+                    <span class="text-sm ml-5 block mt-1">a) Dobrar nessa direção. b) Dobrar e desdobrar. c) Dobrar para trás. d) Dobrar para dentro. e) Linha do vale. f) Linha da montanha. g) Frente. h) Verso. i) Vinco. j) Segurar aqui. k) Soprar. l) Abrir. m) Dobrar em cima da dobra. n) Girar.</span></label>
+                </div>
+                <div class="flex items-start p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                    <input type="checkbox" id="req5" class="mt-1.5 mr-3 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer">
+                    <label for="req5" class="cursor-pointer">5. Explicar a importância e utilidade das bases ou formas básicas. Demonstrar a base quadrada, base do balão, base do pássaro e base da rã.</label>
+                </div>
+                <div class="flex items-start p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                    <input type="checkbox" id="req6" class="mt-1.5 mr-3 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer">
+                    <label for="req6" class="cursor-pointer">6. Dobrar 12 modelos a partir de diagramas ou escolher modelos semelhantes:<br>
+                    <span class="text-sm ml-5 block mt-1">Tsuru, Cachorro, Flor, Cigarra, Sapo que pula, Pombo correio, Barco à vela, Galinha, Folha, Pato, Borboleta, Pessoa.</span></label>
+                </div>
+                <div class="flex items-start p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                    <input type="checkbox" id="req7" class="mt-1.5 mr-3 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer">
+                    <label for="req7" class="cursor-pointer">7. Dobrar 2 modelos de sua escolha, de memória.</label>
+                </div>
+                <div class="flex items-start p-3 bg-white/30 rounded-lg hover:bg-white/50 transition-colors">
+                    <input type="checkbox" id="req8" class="mt-1.5 mr-3 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer">
+                    <label for="req8" class="cursor-pointer">8. Ilustrar uma história da Bíblia usando vários modelos de origami.</label>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <div class="inline-block p-4 bg-white/50 rounded-lg">
+                    <p class="text-lg font-semibold mb-2">Progresso da Especialidade</p>
+                    <div class="text-3xl font-bold mb-2" style="color: var(--accent-color);">
+                        <span id="progress-count">0</span>/8 Requisitos
+                    </div>
+                    <div class="w-64 bg-gray-200 rounded-full h-3 mx-auto">
+                        <div id="progress-bar" class="h-3 rounded-full transition-all duration-300" style="width: 0%; background-color: var(--secondary-color);"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="text-center p-6" style="color: var(--text-color);">
+        <p class="mb-2">Desenvolvido para Desbravadores. Continue praticando e criando!</p>
+        <p class="text-sm opacity-75">Feito com 📜 por <strong>Felipe Allan</strong></p>
+    </footer>
+
+    <!-- MODAL PARA MODELOS E BASES (PASSOS) -->
+    <div id="model-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex justify-center items-center p-4">
+        <div class="modal-content w-full max-w-4xl max-h-[90vh] rounded-lg shadow-2xl p-6 relative flex flex-col">
+            <button id="close-model-modal" class="absolute top-4 right-4 text-3xl font-bold" style="color: var(--accent-color);">&times;</button>
+            <h3 id="model-modal-title" class="text-2xl font-bold mb-4 text-center" style="color: var(--secondary-color);"></h3>
+            <div class="flex-grow flex flex-col md:flex-row items-center justify-center gap-6 overflow-y-auto">
+                <div class="w-full md:w-1/2 flex justify-center items-center">
+                    <img id="model-modal-image" src="" alt="Passo a passo do origami" class="max-w-full max-h-[50vh] object-contain rounded-lg">
+                </div>
+                <div id="model-modal-instructions" class="w-full md:w-1/2 text-lg"></div>
+            </div>
+            <div class="flex justify-between items-center mt-6">
+                <button id="prev-step" class="btn-primary px-5 py-2 rounded-lg">Anterior</button>
+                <span id="step-counter" class="font-semibold">Passo 1 / 10</span>
+                <button id="next-step" class="btn-primary px-5 py-2 rounded-lg">Próximo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA SÍMBOLOS (ITENS 4) -->
+    <div id="symbol-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex justify-center items-center p-4">
+        <div class="modal-content w-full max-w-4xl max-h-[90vh] rounded-lg shadow-2xl p-6 relative flex flex-col">
+            <button id="close-symbol-modal" class="absolute top-4 right-4 text-3xl font-bold" style="color: var(--accent-color);">&times;</button>
+            <h3 id="symbol-modal-title" class="text-2xl font-bold mb-4 text-center" style="color: var(--secondary-color);"></h3>
+            <div class="grid md:grid-cols-2 gap-6 items-start">
+                <div>
+                    <h4 class="text-xl font-semibold mb-3">Símbolo Visual:</h4>
+                    <div id="symbol-modal-visual" class="border p-6 rounded-lg bg-white h-40 flex items-center justify-center text-5xl"></div>
+                    <h4 class="text-xl font-semibold mt-6 mb-3">Movimento/Descrição:</h4>
+                    <p id="symbol-modal-description" class="text-lg"></p>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold mb-3">Tutorial em Vídeo:</h4>
+                    <div id="video-placeholder" class="bg-gray-100 h-64 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 space-y-3">
+                        <div class="text-4xl text-gray-400">🎥</div>
+                        <p class="text-gray-600 text-sm"><strong>Vídeo tutorial será carregado aqui</strong></p>
+                        <p class="text-xs text-gray-500">Para adicionar um vídeo, substitua este conteúdo por um iframe do YouTube, Vimeo ou outro player de vídeo</p>
+                        <button id="open-video-tab" class="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition-colors">
+                            📺 Buscar Vídeo Online
+                        </button>
+                    </div>
+                    <div class="mt-3 text-xs text-gray-500">
+                        <strong>Dica:</strong> Procure por "origami [nome do símbolo] tutorial" no YouTube para encontrar demonstrações práticas.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA VÍDEO DE MODELOS -->
+    <div id="model-video-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex justify-center items-center p-4">
+        <div class="modal-content w-full max-w-4xl max-h-[90vh] bg-white rounded-lg shadow-2xl p-6 relative">
+            <button id="close-model-video-modal" class="absolute top-4 right-4 text-3xl font-bold text-gray-700">&times;</button>
+            <h3 id="model-video-modal-title" class="text-2xl font-bold mb-4 text-center" style="color: var(--secondary-color);"></h3>
+            <div id="model-video-modal-content" class="flex justify-center items-center">
+                <!-- Iframe será inserido aqui -->
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA IMAGEM EM TELA CHEIA -->
+    <div id="image-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex justify-center items-center p-4">
+        <div class="relative w-full h-full flex flex-col justify-center items-center">
+            <button id="close-image-modal" class="absolute top-4 right-4 text-white text-4xl font-bold hover:text-gray-300">&times;</button>
+            <h3 id="image-modal-title" class="text-2xl font-bold mb-4 text-white text-center"></h3>
+            <img id="image-modal-img" src="" alt="" class="max-w-full max-h-[85vh] object-contain">
+        </div>
+    </div>
+
+    <script>
+        const bases = [
+            { 
+                name: 'Base Quadrada', 
+                img: 'https://placehold.co/400x400/D2B48C/584B33?text=Base+Quadrada', 
+                steps: [
+                    { instruction: 'Comece com um papel quadrado. Dobre na diagonal, vinque bem e desdobre.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Passo+1' },
+                    { instruction: 'Dobre na outra diagonal, vinque bem e desdobre.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Passo+2' },
+                    { instruction: 'Dobre ao meio horizontalmente, vinque e desdobre.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Passo+3' },
+                    { instruction: 'Dobre ao meio verticalmente, vinque e desdobre.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Passo+4' },
+                    { instruction: 'Junte os pontos das dobras ao meio, achatando para formar um quadrado menor com todas as pontas de um lado.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Base+Pronta' }
+                ]
+            },
+            { 
+                name: 'Base do Balão', 
+                img: 'https://placehold.co/400x400/A0522D/FFFFFF?text=Base+Balão', 
+                steps: [
+                    { instruction: 'Comece com um papel quadrado. Dobre nas duas diagonais, vinque bem e desdobre.', img: 'https://placehold.co/300x300/A0522D/FFFFFF?text=Passo+1' },
+                    { instruction: 'Dobre ao meio horizontalmente, mantendo a dobra.', img: 'https://placehold.co/300x300/A0522D/FFFFFF?text=Passo+2' },
+                    { instruction: 'Empurre as laterais para dentro, seguindo os vincos das diagonais.', img: 'https://placehold.co/300x300/A0522D/FFFFFF?text=Passo+3' },
+                    { instruction: 'Achate bem, formando um triângulo duplo com uma abertura no topo.', img: 'https://placehold.co/300x300/A0522D/FFFFFF?text=Base+Pronta' }
+                ]
+            },
+            { 
+                name: 'Base do Pássaro', 
+                img: 'https://placehold.co/400x400/D2B48C/584B33?text=Base+Pássaro', 
+                steps: [
+                    { instruction: 'Comece com a Base do Balão já pronta.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Passo+1' },
+                    { instruction: 'Dobre as laterais inferiores para o centro, frente e verso.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Passo+2' },
+                    { instruction: 'Dobre o triângulo superior para baixo, frente e verso. Vinque e desdobre tudo.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Passo+3' },
+                    { instruction: 'Levante a ponta inferior e abra fazendo uma "dobra pétala", usando os vincos como guia.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Passo+4' },
+                    { instruction: 'Repita do outro lado. Você terá uma forma como diamante alongado.', img: 'https://placehold.co/300x300/D2B48C/584B33?text=Base+Pronta' }
+                ]
+            },
+            { 
+                name: 'Base da Rã', 
+                img: 'https://placehold.co/400x400/A0522D/FFFFFF?text=Base+Rã', 
+                steps: [
+                    { instruction: 'Comece com a Base Quadrada já pronta.', img: 'https://placehold.co/300x300/A0522D/FFFFFF?text=Passo+1' },
+                    { instruction: 'Dobre as laterais superiores para o centro, frente e verso.', img: 'https://placehold.co/300x300/A0522D/FFFFFF?text=Passo+2' },
+                    { instruction: 'Levante cada aba e faça uma dobra pétala, abrindo completamente e achatando.', img: 'https://placehold.co/300x300/A0522D/FFFFFF?text=Passo+3' },
+                    { instruction: 'Repita nos 4 lados até formar uma base com 4 "pernas" pontiagudas.', img: 'https://placehold.co/300x300/A0522D/FFFFFF?text=Base+Pronta' }
+                ]
+            },
+        ];
+        
+        const models = [
+            { 
+                name: 'Tsuru', 
+                img: 'https://i.ytimg.com/vi/VACnjqX4Upc/sddefault.jpg', 
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/pzS0ToWZ9DA?si=hWMNgbtLPkgFb_ms" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Cachorro', 
+                img: 'https://cdn.meusartesanato.com.br/i/1/7/28/origami-iniciante-cabeca-de-ic2G-o.jpg',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/yGSo91fDMFw?si=Da6tdLAx87xIF8b_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Flor', 
+                img: 'https://i.ytimg.com/vi/pcl5036KQ6I/maxresdefault.jpg',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/pcl5036KQ6I?si=011OhYnaWnckgzW1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Sapo que Pula', 
+                img: 'https://i.ytimg.com/vi/0r8B2hK9KQU/maxresdefault.jpg',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/OvTisVz4lTQ?si=IJgzHLkhZan6wo2m" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Cigarra', 
+                img: 'https://i.ytimg.com/vi/LyCGKQR4_A0/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAASFG85DaPI1cJ3QBDo93pLHa99Q',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/LyCGKQR4_A0?si=76nqeNgy9J4e_g66" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Pombo Correio', 
+                img: 'https://i.ytimg.com/vi/6saiDCiVE3c/sddefault.jpg',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/T5ryKJDtuCU?si=_1HMqRKX1qcu8kTq" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Barco à Vela', 
+                img: 'https://i.ytimg.com/vi/zkJRVnw7ePk/maxresdefault.jpg',
+                video: `<<iframe width="560" height="315" src="https://www.youtube.com/embed/pStYLh41NPE?si=JPNxZcUZoUcX0TXc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Galinha', 
+                img: 'https://placehold.co/400x400/A0522D/FFFFFF?text=Galinha',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/DSypNFqN_-0?si=mTeNau-rt4maE1uF" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Folha', 
+                img: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiX2jdIjdCj95vMfQ8tK4rOLrew1-IaEEB4Ipj_LAsXo9-qo7ur-xxmXin7mynUXyz2gFc25SuXgIotSQHWFIj5dgbiKhmwQkDXcC9zchkUUVA2-zN6Q6R4UnO9G1a47KDRfAHJfIkB3uw/s1600/como-fazer-folhas-de-origami-1.jpg',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/45ZIwNZamkQ?si=J5Zw-S1-gUOao-Wc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Pato', 
+                img: 'https://placehold.co/400x400/A0522D/FFFFFF?text=Pato',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/IyZmbT1zXiw?si=NjGAHWn2FjQylt4j" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Borboleta', 
+                img: 'https://i.ytimg.com/vi/cyAj2hfi5qY/maxresdefault.jpg',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/cyAj2hfi5qY?si=RTjo5GG0RWbmVkcI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+            { 
+                name: 'Pessoa', 
+                img: 'https://placehold.co/400x400/D2B48C/584B33?text=Pessoa',
+                video: `<iframe width="560" height="315" src="https://www.youtube.com/embed/bvTMyvg3pos?si=Xv4g3gW_2C_quhz4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+            },
+        ];
+
+
+        let currentModel = null;
+        let currentStep = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const baseGrid = document.getElementById('base-grid');
+            const modelGrid = document.getElementById('model-grid');
+            // ...existing code...
+
+            // 1. Bases estão exibidas estaticamente via HTML, não adicionadas dinamicamente
+
+            // 2. Popular Modelos
+            models.forEach((model, index) => {
+                const card = createCard(model, index, 'model');
+                modelGrid.appendChild(card);
+            });
+
+            // Símbolos agora exibidos como imagens estáticas na seção correspondente
+
+
+            // Setup Modals
+            const modelModal = document.getElementById('model-modal');
+            const closeModalModelBtn = document.getElementById('close-model-modal');
+            const prevStepBtn = document.getElementById('prev-step');
+            const nextStepBtn = document.getElementById('next-step');
+            
+            closeModalModelBtn.addEventListener('click', closeModalModel);
+            modelModal.addEventListener('click', (e) => {
+                if(e.target === modelModal) closeModalModel();
+            });
+
+            prevStepBtn.addEventListener('click', prevStep);
+            nextStepBtn.addEventListener('click', nextStep);
+
+            const symbolModal = document.getElementById('symbol-modal');
+            const closeModalSymbolBtn = document.getElementById('close-symbol-modal');
+            
+            closeModalSymbolBtn.addEventListener('click', closeModalSymbol);
+            symbolModal.addEventListener('click', (e) => {
+                if(e.target === symbolModal) closeModalSymbol();
+            });
+
+
+            // Setup Mobile Menu
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+
+            // Setup Progress Tracking
+            setupProgressTracking();
+
+            // Adicionar evento de clique para todas as imagens do site
+            setupImageClickHandlers();
+        });
+
+        function setupImageClickHandlers() {
+            // Selecionar todas as imagens do site, exceto as que já estão em modais e as dos cards de modelos
+            const images = document.querySelectorAll('img:not(#model-modal-image):not(#image-modal-img):not(#model-grid img)');
+            
+            images.forEach(img => {
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.getElementById('image-modal-title').innerText = img.alt || 'Imagem';
+                    document.getElementById('image-modal-img').src = img.src;
+                    document.getElementById('image-modal-img').alt = img.alt || '';
+                    document.getElementById('image-modal').classList.remove('hidden');
+                });
+            });
+        }
+
+        function setupProgressTracking() {
+            const checkboxes = document.querySelectorAll('#requisitos input[type="checkbox"]');
+            const progressCount = document.getElementById('progress-count');
+            const progressBar = document.getElementById('progress-bar');
+            
+            // Load saved progress from localStorage
+            checkboxes.forEach(checkbox => {
+                const savedState = localStorage.getItem(`origami-req-${checkbox.id}`);
+                if (savedState === 'true') {
+                    checkbox.checked = true;
+                }
+                
+                // Add event listener for state changes
+                checkbox.addEventListener('change', () => {
+                    localStorage.setItem(`origami-req-${checkbox.id}`, checkbox.checked);
+                    updateProgress();
+                });
+            });
+            
+            updateProgress();
+            
+            function updateProgress() {
+                const completedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+                const totalCount = checkboxes.length;
+                const percentage = (completedCount / totalCount) * 100;
+                
+                progressCount.textContent = completedCount;
+                progressBar.style.width = `${percentage}%`;
+                
+                // Add celebration effect when completed
+                if (completedCount === totalCount) {
+                    progressBar.style.backgroundColor = '#22c55e'; // Green color
+                    setTimeout(() => {
+                        alert('🎉 Parabéns! Você completou todos os requisitos da Especialidade de Origami!');
+                    }, 500);
+                }
+            }
+        }
+
+        function createCard(data, index, type) {
+            const card = document.createElement('div');
+            card.className = `${type === 'base' ? 'base-card border-2' : ''} card p-4 rounded-lg text-center flex flex-col items-center justify-center shadow-md`;
+            card.innerHTML = `
+                <img src="${data.img}" alt="${data.name}" class="w-full h-auto object-cover rounded-md mb-4">
+                <h4 class="font-semibold text-lg" style="color: var(--secondary-color);">${data.name}</h4>
+            `;
+            card.addEventListener('click', () => {
+                if (data.video) {
+                    openVideoModal(data);
+                } else {
+                    openImageModal(data);
+                }
+            });
+            return card;
+        }
+        
+        // --- Funções do Modal de Modelos/Bases ---
+
+        function openModelModal(data) {
+            currentModel = data;
+            currentStep = 0;
+            updateModelModalContent();
+            document.getElementById('model-modal').classList.remove('hidden');
+        }
+
+        function closeModalModel() {
+            document.getElementById('model-modal').classList.add('hidden');
+            currentModel = null;
+        }
+
+        function updateModelModalContent() {
+            if (!currentModel) return;
+            const step = currentModel.steps[currentStep];
+            document.getElementById('model-modal-title').innerText = currentModel.name;
+            document.getElementById('model-modal-image').src = step.img || currentModel.img;
+            document.getElementById('model-modal-instructions').innerText = step.instruction;
+            document.getElementById('step-counter').innerText = `Passo ${currentStep + 1} / ${currentModel.steps.length}`;
+
+            document.getElementById('prev-step').disabled = currentStep === 0;
+            document.getElementById('next-step').disabled = currentStep === currentModel.steps.length - 1;
+            document.getElementById('prev-step').classList.toggle('opacity-50', currentStep === 0);
+            document.getElementById('next-step').classList.toggle('opacity-50', currentStep === currentModel.steps.length - 1);
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateModelModalContent();
+            }
+        }
+
+        function nextStep() {
+            if (currentModel && currentStep < currentModel.steps.length - 1) {
+                currentStep++;
+                updateModelModalContent();
+            }
+        }
+        
+        // --- Funções do Modal de Símbolos ---
+
+        function openSymbolModal(symbol) {
+            document.getElementById('symbol-modal-title').innerText = symbol.name;
+            document.getElementById('symbol-modal-visual').innerHTML = symbol.visual;
+            document.getElementById('symbol-modal-description').innerText = symbol.description;
+            
+            // Reset do placeholder do vídeo
+            const videoPlaceholder = document.getElementById('video-placeholder');
+            videoPlaceholder.innerHTML = `
+                <div class="text-4xl text-gray-400">🎥</div>
+                <p class="text-gray-600 text-sm"><strong>Vídeo tutorial será carregado aqui</strong></p>
+                <p class="text-xs text-gray-500">Para adicionar um vídeo, substitua este conteúdo por um iframe do YouTube, Vimeo ou outro player de vídeo</p>
+                <button id="open-video-tab" class="mt-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition-colors">
+                    📺 Buscar Vídeo Online
+                </button>
+            `;
+            
+            // Adicionar event listener para o botão de busca de vídeo
+            document.getElementById('open-video-tab').addEventListener('click', () => {
+                const searchQuery = `origami ${symbol.name.toLowerCase()} tutorial`;
+                const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
+                window.open(youtubeUrl, '_blank');
+            });
+            
+            document.getElementById('symbol-modal').classList.remove('hidden');
+        }
+
+        function closeModalSymbol() {
+            document.getElementById('symbol-modal').classList.add('hidden');
+        }
+
+        // --- Funções do Modal de Vídeo de Modelos ---
+
+        function openVideoModal(data) {
+            document.getElementById('model-video-modal-title').innerText = data.name;
+            document.getElementById('model-video-modal-content').innerHTML = data.video;
+            document.getElementById('model-video-modal').classList.remove('hidden');
+        }
+
+        function closeVideoModal() {
+            document.getElementById('model-video-modal').classList.add('hidden');
+            document.getElementById('model-video-modal-content').innerHTML = '';
+        }
+
+        // Evento de fechamento do modal de vídeo
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('close-model-video-modal').addEventListener('click', closeVideoModal);
+            document.getElementById('model-video-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'model-video-modal') closeVideoModal();
+            });
+        });
+
+        // --- Funções do Modal de Imagem ---
+
+        function openImageModal(data) {
+            document.getElementById('image-modal-title').innerText = data.name;
+            document.getElementById('image-modal-img').src = data.img;
+            document.getElementById('image-modal-img').alt = data.name;
+            document.getElementById('image-modal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-modal').classList.add('hidden');
+            document.getElementById('image-modal-img').src = '';
+        }
+
+        // Evento de fechamento do modal de imagem
+        document.getElementById('close-image-modal').addEventListener('click', closeImageModal);
+        document.getElementById('image-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'image-modal') closeImageModal();
+        });
+
+    </script>
+</body>
+</html>
